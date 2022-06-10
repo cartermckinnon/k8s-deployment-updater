@@ -1,0 +1,21 @@
+name: Build container image
+
+on:
+  push:
+    branches:
+    - 'main'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        username: mckdev
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    - uses: actions/checkout@v3
+    - name: Build the image
+      run: docker build . --file Dockerfile --tag mckdev/k8s-deployment-updator:latest
+    - name: Push the image to Docker Hub
+      run: docker push mckdev/k8s-deployment-updator:latest
