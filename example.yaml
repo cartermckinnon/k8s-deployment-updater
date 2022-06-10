@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+ name: deployment-updator
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "update"]
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+ name: deployment-updator-role-binding
+subjects:
+- kind: ServiceAccount
+  name: default
+roleRef:
+ kind: Role
+ name: deployment-updator
+ apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: deployment-updator
+spec:
+  # choose something sensible here, considering things like:
+  # - how often you want your pods recycled
+  # - rate limits on image pulls from your registry
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      # retries will waste your image pulls
+      backoffLimit: 0
+      template:
+        spec:
+          containers:
+          - name: result-broker-updator
+            image: mckdev/k8s-deployment-updator
+            args:
+            - "-in-cluster"
+            - nginx-deployment
+            - nginx:latest
+# you may need to mount a dockerconfigjson secret to authenticate with your registry
+#            volumeMounts:
+#            - name: docker-config
+#              mountPath: /root/.docker/
+#          volumes:
+#          - name: docker-config
+#            secret:
+#              secretName: dockerconfigjson
+#              items:
+#              - key: .dockerconfigjson
+#                path: config.json
+          restartPolicy: Never
