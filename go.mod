@@ -1,4 +1,4 @@
-module github.com/cartermckinnon/k8s-deployment-updator
+module github.com/cartermckinnon/k8s-deployment-updater
 
 go 1.18
 
