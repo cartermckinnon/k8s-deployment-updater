@@ -1,4 +1,4 @@
-# Kubernetes deployment updator
+# Kubernetes deployment updater
 
 This is a silly little program that will update an `image` in a Kubernetes deployment to the latest digest available from an upstream image.
 
@@ -8,7 +8,7 @@ Use this with caution. You likely only want this for a truly stateless applicati
 
 #### On the command line:
 ```
-usage: k8s-deployment-updator DEPLOYMENT_NAME IMAGE_REF
+usage: k8s-deployment-updater DEPLOYMENT_NAME IMAGE_REF
 
 arguments:
   DEPLOYMENT_NAME
