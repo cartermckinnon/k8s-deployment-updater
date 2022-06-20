@@ -22,7 +22,7 @@ spec:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
- name: deployment-updator
+ name: deployment-updater
 rules:
 - apiGroups: ["apps"]
   resources: ["deployments"]
@@ -32,20 +32,20 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
- name: deployment-updator-role-binding
+ name: deployment-updater-role-binding
 subjects:
 - kind: ServiceAccount
   name: default
 roleRef:
  kind: Role
- name: deployment-updator
+ name: deployment-updater
  apiGroup: rbac.authorization.k8s.io
 
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: deployment-updator
+  name: deployment-updater
 spec:
   # choose something sensible here, considering things like:
   # - how often you want your pods recycled
@@ -59,7 +59,7 @@ spec:
       template:
         spec:
           containers:
-          - name: result-broker-updator
+          - name: nginx-updater
             image: mckdev/k8s-deployment-updator
             args:
             - "-in-cluster"
