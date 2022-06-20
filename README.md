@@ -2,7 +2,7 @@
 
 This is a silly little program that will update an `image` in a Kubernetes deployment to the latest digest available from an upstream image.
 
-For example, you may want a deployment to be automatically updated to use the current digest referred to by a `latest` tag.
+For example, you may want a deployment to be regularly updated to use the current digest referred to by a `latest` tag.
 
 Use this with caution. You likely only want this for a truly stateless application that does not serve critical production traffic.
 
